@@ -47,17 +47,26 @@ sphere.castShadow = true
 const ambientLight = new THREE.AmbientLight(0x333333);
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
-scene.add( directionalLight );
-directionalLight.position.set(-30, 50, 0);
-directionalLight.castShadow = true;
-directionalLight.shadow.camera.bottom = -20;
+// const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
+// scene.add( directionalLight );
+// directionalLight.position.set(-30, 50, 0);
+// directionalLight.castShadow = true;
+// directionalLight.shadow.camera.bottom = -20;
 
-const dLightHelper = new THREE.DirectionalLightHelper(directionalLight, 5);
-scene.add(dLightHelper);
+// const dLightHelper = new THREE.DirectionalLightHelper(directionalLight, 5);
+// scene.add(dLightHelper);
 
-const dLightShadowHelper = new THREE.CameraHelper(directionalLight.shadow.camera);
-scene.add(dLightShadowHelper);
+// const dLightShadowHelper = new THREE.CameraHelper(directionalLight.shadow.camera);
+// scene.add(dLightShadowHelper);
+
+const spotLight = new THREE.SpotLight(0xFFFFFF);
+scene.add(spotLight);
+spotLight.position.set(-100, 100, 0);
+spotLight.castShadow = true;
+spotLight.angle = 0.2;
+
+const sLightHelper = new THREE.SpotLightHelper(spotLight);
+scene.add(sLightHelper);
 
 const gui = new dat.GUI();
 
@@ -97,6 +106,11 @@ function animate() {
   sphere.position.y = 10 * Math.abs(Math.sin(step));
 
   orbit.update()
+
+  spotLight.angle = options.angle;
+  spotLight.penumbra = options.penumbra;
+  spotLight.intensity = options.intensity;
+  sLightHelper.update();
 
   renderer.render( scene, camera );
 };
