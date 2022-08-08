@@ -131,23 +131,44 @@ gui.add(options, 'intensity', 0, 1);
 let step = 0;
 let speed = 0.01;
 
-function animate() {
-  requestAnimationFrame( animate );
+const mousePosition = new THREE.Vector2();
 
-  box.rotation.x += 0.01;
-  box.rotation.y += 0.01;
+window.addEventListener('mousemove', function(e) {
+    mousePosition.x = (e.clientX / window.innerWidth) * 2 - 1;
+    mousePosition.y = - (e.clientY / window.innerHeight) * 2 + 1;
+});
+
+const rayCaster = new THREE.Raycaster();
+
+const sphereId = sphere.id;
+box2.name = 'theBox';
+
+function animate(time) {
+  box.rotation.x = time / 1000;
+  box.rotation.y = time / 1000;
 
   step += options.speed;
   sphere.position.y = 10 * Math.abs(Math.sin(step));
-
-  orbit.update()
 
   spotLight.angle = options.angle;
   spotLight.penumbra = options.penumbra;
   spotLight.intensity = options.intensity;
   sLightHelper.update();
 
-  renderer.render( scene, camera );
-};
+  rayCaster.setFromCamera(mousePosition, camera);
+  const intersects = rayCaster.intersectObjects(scene.children);
 
-animate();
+  for(let i = 0; i < intersects.length; i++) {
+      if(intersects[i].object.id === sphereId)
+          intersects[i].object.material.color.set(0xFF0000);
+
+      if(intersects[i].object.name === 'theBox') {
+          intersects[i].object.rotation.x = time / 1000;
+          intersects[i].object.rotation.y = time / 1000;
+      }
+  }
+
+  renderer.render(scene, camera);
+}
+
+renderer.setAnimationLoop(animate);
