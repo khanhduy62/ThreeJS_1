@@ -176,17 +176,32 @@ function animate(time) {
   rayCaster.setFromCamera(mousePosition, camera);
   const intersects = rayCaster.intersectObjects(scene.children);
 
-  for(let i = 0; i < intersects.length; i++) {
-      if(intersects[i].object.id === sphereId)
-          intersects[i].object.material.color.set(0xFF0000);
+  if (intersects.length) {
+    const sphereObj = intersects.find(el => el.object.id === sphereId);
+    const boxObj = intersects.find(el => el.object.name === 'theBox');
 
-      if(intersects[i].object.name === 'theBox') {
-          intersects[i].object.rotation.x = time / 1000;
-          intersects[i].object.rotation.y = time / 1000;
-      }
+    if (sphereObj) {
+      sphereObj.object.material.color.set(0xFF0000);
+    } else {
+      sphere.material.color.set(0x0000FF)
+    }
+
+    if (boxObj) {
+      boxObj.object.rotation.x = time / 1000;
+      boxObj.object.rotation.y = time / 1000;
+    }
+
+  } else {
+    sphere.material.color.set(0x0000FF)
   }
 
   renderer.render(scene, camera);
 }
 
 renderer.setAnimationLoop(animate);
+
+window.addEventListener('resize', function() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
